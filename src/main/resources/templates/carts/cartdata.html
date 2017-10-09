@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<title>Shopping App</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	<link href="/css/style.css" type="text/css" rel="stylesheet" />
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+	
+	<script src="http://cdn.jsdelivr.net/webjars/jquery/3.2.1/jquery.min.js" th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+</head>
+<body>
+
+<header class="shoppingheader" th:replace="fragments/header :: shoppingheader">
+	
+</header>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<h2 th:text="${cart.getName()}">Name</h2>
+						
+			<div class="col-md-12 alert alert-warning" th:if="${cart.isItemsEmpty()}">
+				<p th:text="#{cartitems.itemsnotfound}">Ei vielä tuotteita!</p>
+			</div>
+			
+		</div>
+	</div>
+	<div class="row row-center">
+		<div class="col-md-7 col-center">
+			<h3 th:text="#{cartitems.text.addnewitem}">Lisää uusi tuote</h3>
+		</div>
+	</div>
+	
+	<div class="row row-center">
+		<div class="col-xs-12 col-md-7 alert alert-warning col-center">
+		
+			<form action="#" th:action="@{/carts/} + ${cart.getCartId()} + '/products/newitem'" th:object="${item}" method="post">
+				
+				
+				<div class="form-group" th:classappend="${#fields.hasErrors('itemName')} ? 'has-error' : ''">
+					<label for="itemName" th:text="#{cartitems.name}">Tuotteen nimi</label>
+					<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('itemName')}" th:text="#{newitem.error.name}">Virheellinen nimi!</div>
+										
+					<input type="text" class="form-control" th:field="*{itemName}" id="itemName" />
+				</div>
+				
+				<div class="form-group">
+					<label for="itemDescription" th:text="#{cartitems.description}">Tuotteen tietoja</label>
+					<input type="text" class="form-control" th:field="*{itemDescription}" id="itemDescription" />
+				</div>
+				
+				<div class="form-group" th:classappend="${#fields.hasErrors('itemAmount')} ? 'has-error' : ''">
+					<label for="itemAmount" th:text="#{cartitems.amount}">Määrä (kpl)</label>
+					<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('itemAmount')}" th:text="#{newitem.error.amount}">Virheellinen määrä (minimi 1)!</div>
+					<input type="text" class="form-control" th:field="*{itemAmount}" id="itemAmount" />
+				</div>
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" th:value="#{cartitems.button.additem}" />
+				</div>
+				
+		</form>
+		
+		</div>
+	</div>
+	
+	<div class="row row-center">
+		<div class="col-md-7 col-center">
+			<h3 th:text="#{cartitems.text.listproducts}">Listan tuotteet:</h3>
+		</div>
+	</div>
+	
+	<div class="col-md-12 alert alert-warning text-center" th:if="${cart.isItemsEmpty()}">
+		<p th:text="#{cartitems.itemsnotfound}">Ei vielä tuotteita!</p>
+	</div>
+	
+	<div class="row cart-item cart-item-bluered row-center" th:each="product : ${cart.getItems()}">
+		<div class="col-md-9 col-xs-12 col-center">
+			<div class="col-md-12">
+				<form id="ItemFormLine" action="#" th:action="@{/carts/} + ${cart.getCartId()} + '/products/' + ${product.getItemId()} + '/edit'" th:object="${item}" method="post">
+					
+					<input type="hidden" th:value="${cart.getCartId()}" name="cartId" />
+					<input type="hidden" th:value="${product.getItemId()}" name="itemId" />
+					
+					<!-- 
+					<div class="form-group col-md-1">
+						<label for="collected">Kerätty:</label>
+						<input class="form-control" type="checkbox" th:checked="${product.itemCollected}" id="itemCollected" name="itemCollected"  onchange="form.submit()" />
+					</div>
+					-->
+					
+					<div class="form-group col-md-4">
+						<label for="itemName" th:text="#{cartitems.name}">Nimi:</label>
+						<input class="form-control" type="text" th:value="${product.getItemName()}" name="itemName" />
+					</div>
+					
+					<div class="form-group col-md-6">
+						<label for="itemDescription" th:text="#{cartitems.description}">Tietoja:</label>
+						<input class="form-control" type="text" th:value="${product.getItemDescription()}" name="itemDescription" />
+					</div>
+					
+					<div class="form-group col-md-2">
+						<label for="itemAmount" th:text="#{cartitems.amount}">Määrä (kpl):</label>
+						<input class="form-control" type="text" th:value="${product.getItemAmount()}" name="itemAmount" />
+					</div>
+					
+					<div class="col-md-6 col-xs-6 text-left">
+						
+						<input class="btn btn-xs btn-primary" type="submit" th:value="#{cartitems.button.save}" />
+
+					</div>
+				</form>
+				<div class="col-md-6 col-xs-6 text-right">
+					<form class="form-inline" id="ItemDelete" action="#" th:action="@{/carts/} + ${cart.getCartId()} + '/products/' + ${product.getItemId()} + '/delete'" method="post">
+						<input type="hidden" th:value="${cart.getCartId()}" name="cartId" />
+						<input type="hidden" th:value="${product.getItemId()}" name="deleteItemId" />
+						<input class="btn btn-xs btn-danger" type="submit" th:value="#{cartitems.button.delete}" />
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>		
+</div>
+
+</body>
+</html>

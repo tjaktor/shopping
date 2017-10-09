@@ -1,0 +1,91 @@
+body {
+	background-color: darkblue;
+	color: white;
+}
+
+h2.Header {
+	font-size: 1.3em;
+}
+
+div.row-center {
+	text-align: center;
+}
+
+div.col-center {
+	display: inline-block;
+	float: none;
+	text-align: left;
+}
+
+
+/* Cart data -page */
+
+.cart-item-bluered:NTH-CHILD(ODD) {
+    color: #13648a;
+    background-color: #faffff;
+    border-color: #e6f0fa;
+}
+
+.cart-item-bluered:NTH-CHILD(EVEN) {
+    color: #13648a;
+    background-color: #fefbff;
+    border-color: #e6f0fa;
+}
+
+.cart-item {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+/* Collect -page */
+
+.collect-headers {
+	margin-bottom: 1.1em;
+}
+
+.collect-item-bluered:NTH-CHILD(ODD) {
+    color: #13648a;
+    background-color: #faffff;
+    border-color: #e6f0fa;
+}
+
+.collect-item-bluered:NTH-CHILD(EVEN) {
+    color: #13648a;
+    background-color: #fefbff;
+    border-color: #e6f0fa;
+}
+
+.collect-item {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+/* Footer **/
+
+footer.Footer {
+	margin-top: 20%;
+}
+
+/** Tests **/
+div.red {
+	background-color: red;
+}
+
+.text-red {
+	color: red;
+}
+
+/** Carts -page **/
+
+@media (max-width: 767px) { 
+
+	input[type=checkbox] {
+		
+		transform: scale(1.5);
+	}
+	
+}

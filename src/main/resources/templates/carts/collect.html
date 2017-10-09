@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<title>Shopping App</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<link href="/css/style.css" type="text/css" rel="stylesheet" />
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+	
+	<script src="http://cdn.jsdelivr.net/webjars/jquery/3.2.1/jquery.min.js" th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+</head>
+<body>
+
+<header class="shoppingheader" th:replace="fragments/header :: shoppingheader">
+	
+</header>
+
+<div class="container">
+
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<h2 th:text="${cart.getName()}">Name</h2>
+			<p th:text="#{collectitems.text.listproducts}">Listan tuotteet:</p>
+			
+			<div class="col-md-12 alert alert-warning" th:if="${cart.isItemsEmpty()}">
+				<span th:text="#{collectitems.text.noproducts}">Ei tuotteita!</span>&nbsp;&nbsp;<a href="/carts" class="alert-link"><span th:text="#{collectitems.text.backtocarts}">Takaisin ostoslistoihin</span></a>
+			</div>
+			<div class="col-md-12 alert alert-success" th:if="${cart.isAllItemsCollected()}">
+				<span th:text="#{collectitems.text.allproductscollected}">Kaikki tuotteet kerätty!</span>&nbsp;&nbsp;<a href="/carts" class="alert-link"><span th:text="#{collectitems.text.backtocarts}">Takaisin ostoslistoihin</span></a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="text-center row">
+		<div class="col-md-12 col-xs-12 text-center collect-headers">
+			<div class="col-md-3 col-xs-3">
+				<strong><span th:text="#{collectitems.name}">Nimi</span></strong>
+			</div>
+			
+			<div class="col-md-4 col-xs-4">
+				<strong><span th:text="#{collectitems.description}">Tietoja</span></strong>
+			</div>
+			
+			<div class="col-md-2 col-xs-2">
+				<strong><span th:text="#{collectitems.amount}">Määrä (kpl)</span></strong>
+			</div>
+			
+			<div class="col-md-3 col-xs-3">
+				<strong><span th:text="#{collectitems.collected}">Kerätty</span></strong>
+			</div>
+		</div>
+	</div>
+	
+	<div th:each="item : ${cart.getItems()}" class="row" th:classappend="${item.isItemCollected()} ? 'alert alert-success' : 'collect-item collect-item-bluered'">
+		<div class="col-md-12 col-xs-12 text-center">
+			
+			<div class="col-md-3 col-xs-3">
+					<span th:text="${item.getItemName()}">Name</span>
+			</div>
+			
+			<div class="col-md-4 col-xs-4">
+				<span th:text="${item.getItemDescription()}">Description</span>
+			</div>
+			
+			<div class="col-md-2 col-xs-2">
+				<span th:text="${item.getItemAmount()}">Amount</span>
+			</div>
+			
+			<form id="ItemFormLine" action="#" th:action="@{/carts/} + ${cart.getCartId()} + '/collect'" th:object="${item}" method="post">
+				
+				<input type="hidden" th:value="${item.getItemId()}" name="itemId" />
+				
+				<div class="col-md-3 col-xs-3">
+					<input class="form-control" type="checkbox" th:checked="${item.itemCollected}" id="itemCollected" name="itemCollected"  onchange="form.submit()" />
+				</div>
+			</form>		
+		</div>
+	</div>
+</div>
+	
+</body>
+</html>

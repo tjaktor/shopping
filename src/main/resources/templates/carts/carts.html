@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<title>Shopping App</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		
+	<link href="/css/style.css" type="text/css" rel="stylesheet" />
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+	
+	<script src="http://cdn.jsdelivr.net/webjars/jquery/3.2.1/jquery.min.js" th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+</head>
+<body>
+
+<header class="shoppingheader" th:replace="fragments/header :: shoppingheader">
+
+</header>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<div class="col-md-12 alert alert-warning" th:if="${carts.size() == 0}">
+				<p th:text="#{shoppinglistsnotfound}">Ostoskoreja ei löytynyt!</p>
+			</div>
+		</div>
+	</div>
+	<div class="row alert alert-light hidden-xs hidden-sm">
+		<div class="col-md-12">
+			<div class="col-md-1 text-center">
+				<span><strong th:text="#{cart.id}">ID</strong></span>
+			</div>
+			<div class="col-md-3 text-center">
+				<span><strong th:text="#{cart.header}">Otsikko</strong></span>
+			</div>
+			<div class="col-md-3 text-center">
+				<span><strong th:text="#{cart.timemade}">Tehty</strong></span>
+			</div>
+			<div class="col-md-3 text-center">
+				<span><strong th:text="#{cart.functions}">Toiminnot</strong></span>
+			</div>
+		</div>
+	</div>
+	<div class="row" th:each="cart : ${carts}" th:classappend="${cart.isAllItemsCollected()} ? 'alert alert-success' : 'alert alert-warning'">
+		<div class="col-md-12">
+			<div class="col-md-1 text-center">
+				<span th:text="${cart.getCartId()}">ID</span>
+			</div>
+			<div class="col-md-3 text-center">
+				<a th:href="'/carts/' + ${cart.getCartId()} + '/products'" th:text="${cart.getName()}">Name</a>
+			</div>
+			<div class="col-md-3 text-center">
+				<span th:text="${#dates.format(cart.getCreatedOn(), 'dd-M-yyyy HH:mm')}">Created</span>
+			</div>
+			
+			<div class="col-md-1 text-center">
+				<a th:href="'/carts/' + ${cart.getCartId()} + '/collect'" class="btn btn-xs btn-success" role="button" th:text="#{cartlist.button.collect}">Keräile</a>
+			</div>
+			
+			<div class="col-md-2 text-center">
+				<a th:href="'/carts/' + ${cart.getCartId()} + '/products'" class="btn btn-xs btn-primary" role="button" th:text="#{cartlist.button.addedit}">Lisää / Muokkaa</a>
+			</div>
+			
+			<div class="col-md-1 text-center">
+				<form action="#" th:action="@{/carts/deletecart}" method="post">
+					<input type="hidden" name="deletecart" th:value="${cart.getCartId()}" />
+					<input type="submit" class="btn btn-xs btn-danger" th:value="#{cartlist.button.delete}" />
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row text-center">
+		<div class="col-md-12 col-xs-12 text-center">
+			<form id="NewCart" action="#" th:action="@{/carts}" th:object="${cart}" method="post">
+				
+				<div class="form-group">
+					<label for="newCartName" th:text="#{cartlist.text.newcart}">Uuden ostoslistan nimi:</label>
+					<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Virheellinen nimi!</div>
+					<input type="text" class="form-control" th:field="*{name}" id="newCartName"/>
+				</div>
+				
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" th:value="#{cartlist.button.addnewcart}" />
+				</div>
+				
+			</form>
+		</div>
+	</div>
+</div>
+	
+</body>
+</html>
