@@ -175,6 +175,7 @@
 
    END OF TERMS AND CONDITIONS
 
+<<<<<<< HEAD
    APPENDIX: How to apply the Apache License to your work.
 
       To apply the Apache License to your work, attach the following
@@ -187,6 +188,9 @@
       identification within third-party archives.
 
    Copyright {yyyy} {name of copyright owner}
+=======
+   Copyright 2017 Timo Kettunen
+>>>>>>> 2d6a76a4ff5c75081fe7547257aba51cda7e6e17
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
