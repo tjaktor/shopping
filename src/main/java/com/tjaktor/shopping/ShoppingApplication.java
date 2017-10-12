@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 
  * @author Timo Kettunen
  *
- * Version 0.9
- * Date 12.10.2017
+ * Version 12.10.17
  */
 @SpringBootApplication
 public class ShoppingApplication {
