@@ -2,6 +2,7 @@ package com.tjaktor.shopping.service;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,10 @@ import com.tjaktor.shopping.repository.CartRepository;
 
 @Service
 public class CartServiceImple implements CartService {
-
+	
 	private CartRepository cartRepository;
 	
+	@Autowired
 	public CartServiceImple(CartRepository cartRepository) {
 		
 		this.cartRepository = cartRepository;
@@ -206,7 +208,7 @@ public class CartServiceImple implements CartService {
 			validateId(cartId);
 			validateId(itemId);
 			Cart cart = this.cartRepository.findOne(cartId);
-
+			
 			if (null != cart) {
 				cart.changeCollectedStatus(itemId);
 				

@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
-public class Item implements Serializable, Collectable {
+public class Item implements Serializable {
 	
 	private static final long serialVersionUID = 3798027626309716931L;
 
@@ -41,8 +41,7 @@ public class Item implements Serializable, Collectable {
 	@Override
 	public String toString ( )
 	{
-		// TODO Auto-generated method stub
-		return super.toString();
+		return "[Item ID: " + this.itemId + ", description: " + this.itemDescription + ", amount: " + this.itemAmount + ", cart ID:" + cart.getCartId() + ", collected: " + this.itemCollected + "]";
 	}
 	
 	public Long getItemId() {
@@ -97,6 +96,9 @@ public class Item implements Serializable, Collectable {
 		this.itemCollected = collected;
 	}
 	
+	/**
+	 * Change item collected {@literal boolean} status
+	 */
 	public void changeCollectedStatus() {
 		
 		if (false == this.itemCollected) {

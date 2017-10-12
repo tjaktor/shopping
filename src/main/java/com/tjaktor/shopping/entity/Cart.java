@@ -43,7 +43,7 @@ public class Cart implements Serializable {
 	@Override
 	public String toString ( )
 	{
-		return "Cart [" + this.cartId + ", " + this.name + ", " + this.createdOn + "]";
+		return "[Cart ID: " + this.cartId + ", name: " + this.name + ", created: " + this.createdOn + "]";
 	}
 	
 	public Long getCartId() {

@@ -1,30 +1,32 @@
 package com.tjaktor.shopping.service;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
 
 /**
- * Used for event notification to application clients.
+ * Used for event notification to the application clients.
  * 
  * Under construction. TEST VERSION.
  */
 @Service("Events")
 public class EventServiceImple implements EventService, EventPropagation {
-	
-	Set<SseEmitter> emitters = new HashSet<>();
-	
+		
+	Map<String, SseEmitter> emitters = new HashMap<>();
+		
 	/**
-	 * Subscribe a new emitter.
+	 * Subscribe a service side event -emitter to the emitters list.
+	 * If the list already countains an emitter from the same session, the old one will be replaced.
 	 * 
+	 * @param sessionId {@link SessionId}
 	 * @return Emitter
 	 */
 	@Override
-	public SseEmitter subscribe() {
+	public SseEmitter subscribe(SessionId sessionId) {
 
 		final SseEmitter emitter = new SseEmitter();
 		
@@ -37,24 +39,23 @@ public class EventServiceImple implements EventService, EventPropagation {
 			this.emitters.remove(emitter);
 		});
 		
-		this.emitters.add(emitter);
+		this.emitters.put(sessionId.getSessionId(), emitter);
 		return emitter;
-		
 	}
 
 
 	/**
-	 * Notify emitters for an event.
+	 * Notify all the emitters for an event.
 	 */
 	@Override
 	public void propagateEvent() {
 
-		emitters.forEach(emitter -> {
-			if (null != emitter) {
+		emitters.forEach((key, emitter) -> {
+			if (emitter != null) {
 				try {
-					SseEventBuilder builder = SseEmitter.event().name("message").data("ping");				
+					SseEventBuilder builder = SseEmitter.event().name("message").data("ping");
 					emitter.send(builder);
-				} catch ( IOException ex ) {
+				} catch (IOException ex) {
 					emitter.completeWithError(ex);
 				}
 			}

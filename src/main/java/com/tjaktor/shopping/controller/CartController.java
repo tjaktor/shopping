@@ -59,7 +59,7 @@ public class CartController {
 	
 	
 	/**
-	 * Create a new cart. If user's form input has errors, redirect to the cart overview page (where the 'create a new cart -form' is) with the error data. 
+	 * Create a new cart. Uses PRG (POST-Redirect-GET) -pattern. If user's form input has errors, redirect to the cart overview page (where the 'create a new cart -form' is) with the error data. 
 	 * 
 	 * @param cart Cart - The cart entity
 	 * @param bindingResult BindingResult - Form validation results
@@ -68,7 +68,7 @@ public class CartController {
 	 * @return String redirect to carts overview
 	 */
 	@RequestMapping(value = "/carts", method = RequestMethod.POST)
-	public String addCart(@ModelAttribute("cart") @Valid Cart cart, BindingResult bindingResult, 
+	public String createCart(@ModelAttribute("cart") @Valid Cart cart, BindingResult bindingResult, 
 			RedirectAttributes redirectAttr, Model model) {
 		
 		if (bindingResult.hasErrors()) {
@@ -76,25 +76,27 @@ public class CartController {
 			redirectAttr.addFlashAttribute("cart", cart);
 			return "redirect:/carts";
 		}
-		
+
 		this.cartService.createCart(cart);
 		this.eventPropagation.propagateEvent();
+		
 		return "redirect:/carts";
 	}
 	
 	
 	/**
-	 * Delete a cart with an id.
+	 * Delete a cart by an ID.
 	 * 
-	 * @param cartId Long - The Id of the cart to be deleted
+	 * @param cartId Long - The ID of the cart to be deleted
 	 * @param model Model
 	 * @return String redirect to carts overview
 	 */
 	@RequestMapping(value = "/carts/deletecart")
 	public String deleteCart(@RequestParam(value = "deletecart") Long cartId, Model model) {
-		
+
 		this.cartService.deleteCart(cartId);
 		this.eventPropagation.propagateEvent();
+		
 		return "redirect:/carts";
 	}
 	
@@ -127,17 +129,17 @@ public class CartController {
 	
 	
 	/**
-	 * Add new item into a cart.
+	 * Add new item into a cart. Uses PRG (POST-Redirect-GET) -pattern if bindingResults contain errors.
 	 * 
 	 * @param item Item - A validated item from the form
 	 * @param bindingResult BindingResult - Form validation results
-	 * @param cartId Long
+	 * @param cartId Long - The ID of the cart
 	 * @param model Model
 	 * @param redirectAttr RedirectAttributes
 	 * @return String redirect to a cart
 	 */
 	@RequestMapping(value = "/carts/{cartId}/products/newitem", method = RequestMethod.POST)
-	public String addItem(@ModelAttribute("item") @Valid Item item, BindingResult bindingResult, 
+	public String createItem(@ModelAttribute("item") @Valid Item item, BindingResult bindingResult, 
 			@PathVariable("cartId") Long cartId, Model model, RedirectAttributes redirectAttr) {
 		
 		if ( bindingResult.hasErrors()) {
@@ -148,6 +150,7 @@ public class CartController {
 		
 		this.cartService.createItem(cartId, item);
 		this.eventPropagation.propagateEvent();
+		
 		return "redirect:/carts/{cartId}/products";
 	}
 	
@@ -157,11 +160,11 @@ public class CartController {
 	 * 
 	 * @param item Item - The product to be edited
 	 * @param bindingResult BindingResult - Form validation results
-	 * @param cartId Long - The ID of the cart which includes the product
+	 * @param cartId Long - The ID of the cart the product belongs to 
 	 * @return String Redirect to the requested cart 
 	 */
 	@RequestMapping(value = "/carts/{cartId}/products/{itemPathId}/edit", method = RequestMethod.POST)
-	public String editItem(@Valid @ModelAttribute Item item, BindingResult bindingResult, 
+	public String updateItem(@Valid @ModelAttribute Item item, BindingResult bindingResult, 
 			@PathVariable("cartId") Long cartId, RedirectAttributes redirectAttr) {
 
 		if ( bindingResult.hasErrors() ) {
@@ -169,9 +172,10 @@ public class CartController {
 			redirectAttr.addFlashAttribute("itemError", item);
 			return "redirect:/carts/{cartId}/products";
 		}
-		
+
 		this.cartService.updateItem(cartId, item);
 		this.eventPropagation.propagateEvent();
+		
 		return "redirect:/carts/{cartId}/products";
 	}
 
@@ -179,16 +183,17 @@ public class CartController {
 	/**
 	 * Delete requested product from a cart.
 	 * 
-	 * @param itemId Long - The ID of the product to delete
-	 * @param cartId Long - The cart ID to delete product from
+	 * @param itemId Long - The ID of the product to be deleted
+	 * @param cartId Long - The cart ID from where the product is being deleted
 	 * @return String Redirect to the requested cart
 	 */
 	@RequestMapping(value = "/carts/{cartId}/products/{itemPathId}/delete", method = RequestMethod.POST)
 	public String deleteItem(@RequestParam(value = "deleteItemId") Long itemId, 
 			@RequestParam(value = "cartId") Long cartId) {
-		
+
 		this.cartService.deleteItem(cartId, itemId);
 		this.eventPropagation.propagateEvent();
+		
 		return "redirect:/carts/{cartId}/products";
 	}
 	
@@ -196,7 +201,7 @@ public class CartController {
 	/**
 	 * Show the item collecting -page
 	 * 
-	 * @param cartId Long - The ID of the cart
+	 * @param cartId Long - The ID of the cart being collected
 	 * @param model Model
 	 * @throws NotFoundException if cart not found
 	 * @return String carts/collect (template)
@@ -225,9 +230,10 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/carts/{cartId}/collect", method = RequestMethod.POST)
 	public String collectCartItem(@RequestParam("itemId") Long itemId, @PathVariable("cartId") Long cartId, Model model) {
-		
+
 		this.cartService.collectItem(cartId, itemId);
 		this.eventPropagation.propagateEvent();
+		
 		return "redirect:/carts/{cartId}/collect";
 	}
 }

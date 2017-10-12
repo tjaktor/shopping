@@ -11,6 +11,6 @@ public interface EventService {
 	 * 
 	 * @return SseEmitter
 	 */
-	public SseEmitter subscribe();
+	public SseEmitter subscribe(SessionId sessionId);
 	
 }
